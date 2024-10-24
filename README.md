@@ -16,25 +16,42 @@ If you use Windows, it's better to install WSL: https://documentation.ubuntu.com
 ### Run local build
 
 Initialize a local container using (First initialization)
-`make init`
+```bash
+make init
+```
 
 To start a local container run
-`make start`
+```bash
+make start
+```
 
 ### Run application
 
 Open docker container bash
-`make php-cli`
+```bash
+make php-cli
+```
 
 Run application inside docker container 
-`php bin/console app:check-exchange-rates` or `php bin/console app:cer`
+```bash
+php bin/console app:check-exchange-rates
+```
+
+or use alias
+```bash
+php bin/console app:cer
+```
 
 For checking emails go to Mailcatcher
-`http://localhost:8025/`
+```bash
+http://localhost:8025/
+```
 
 ### Run unit tests
 For running Unit test please run the command
-`php bin/phpunit`
+```bash
+php bin/phpunit
+```
 
 ## Execution scenarios
 
@@ -55,3 +72,9 @@ For running Unit test please run the command
 2. Run the command again, choose the same, type threshold;
 3. In the console, you should see exchange rates list with message 'There are some rates changes: (currencies). The list of changes was sent via email!'; 
 4. Go to Mailcather. You should see email with changed rates + actual list with all rates.
+
+## Code analyzing
+- For analyzing code with Rector use command
+```bash
+vendor/bin/rector process --dry-run
+```
