@@ -26,7 +26,7 @@ abstract class RatesProviderBase implements RatesProviderInterface
         $newRates = $this->fetchRatesFromApi($response);
         $oldRates = $this->loadOldRates($filePath);
         // Compare old & new rates; print new rates in console.
-        $changes = $this->compareRates($newRates, $oldRates, $threshold, $io);
+        $changes = $this->printRates($newRates, $oldRates, $threshold, $io);
         $this->saveRates($filePath, $newRates);
 
         $payload = [
@@ -53,34 +53,55 @@ abstract class RatesProviderBase implements RatesProviderInterface
         return [];
     }
 
-    protected function compareRates(array $newRates, array $oldRates, float $threshold, SymfonyStyle $io): array
+    protected function printRates(array $newRates, array $oldRates, float $threshold, SymfonyStyle $io): array
     {
         $changes = [];
-
+    
         foreach ($newRates as $currency => $rate) {
-            $buy = $rate['buy'];
-            $sell = $rate['sell'];
-
-            // Print rate in console.
-            $io->writeln($this->emailService->printRate($currency, $buy, $sell));
-
-            if (isset($oldRates[$currency])) {
-                $buyOld = $oldRates[$currency]['buy'];
-                $sellOld = $oldRates[$currency]['sell'];
-
-                // Calculate difference between old an new (in percents).
-                $buyChange = $buyOld ? abs(($buy - $buyOld) / $buyOld * 100) : 0;
-                $sellChange = $sellOld ? abs(($sell - $sellOld) / $sellOld * 100) : 0;
-
-                if ($buyChange > $threshold || $sellChange > $threshold) {
-                    $changes[$currency] = [
-                        'buy' => $buy,
-                        'sell' => $sell,
-                    ];
-                }
+            // Print rate inconsole
+            $this->printRateToConsole($currency, $rate['buy'], $rate['sell'], $io);
+            // Compare old & new values.
+            $rateChanges = $this->checkRateChange($currency, $rate, $oldRates, $threshold);
+    
+            if (!empty($rateChanges)) {
+                $changes[$currency] = $rateChanges;
             }
         }
-
+    
         return $changes;
+    }
+    
+    private function printRateToConsole(string $currency, float $buy, float $sell, SymfonyStyle $io): void
+    {
+        $io->writeln($this->emailService->printRate($currency, $buy, $sell));
+    }
+    
+    private function checkRateChange(string $currency, array $newRate, array $oldRates, float $threshold): array
+    {
+        if (!isset($oldRates[$currency])) {
+            return [];
+        }
+    
+        $buyNew = $newRate['buy'];
+        $sellNew = $newRate['sell'];
+    
+        $buyOld = $oldRates[$currency]['buy'];
+        $sellOld = $oldRates[$currency]['sell'];
+    
+        $buyChange = $this->calculateChange($buyNew, $buyOld);
+        $sellChange = $this->calculateChange($sellNew, $sellOld);
+    
+        if ($buyChange > $threshold || $sellChange > $threshold) {
+            return [
+                'buy' => $buyNew,
+                'sell' => $sellNew,
+            ];
+        }
+    
+        return [];
+    }
+    
+    private function calculateChange(float $newRate, float $oldRate): float {
+        return $oldRate ? abs(($newRate - $oldRate) / $oldRate * 100) : 0;
     }
 }
