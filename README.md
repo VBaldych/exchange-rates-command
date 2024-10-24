@@ -21,7 +21,7 @@ Initialize a local container using (First initialization)
 To start a local container run
 `make start`
 
-## Run application
+### Run application
 
 Open docker container bash
 `make php-cli`
@@ -32,25 +32,25 @@ Run application inside docker container
 For checking emails go to Mailcatcher
 `http://localhost:8025/`
 
-## Run unit tests
+### Run unit tests
 For running Unit test please run the command
 `php bin/phpunit`
 
-### Execution scenarios
+## Execution scenarios
 
-## 1. First fetch
+### 1. First fetch
 1. Check folder `/files`, it should be empty;
 2. Run the command, choose a bank and threshold;
 3. In the console, you should see exchange rates list with success message; 
 4. Check `/files` folder, file is created. Also, you can check how data is keeping in the file;
 5. Go to Mailcather. You should see message with exchange rates.
 
-## 1. Non-first fetch and same data
+### 2. Non-first fetch and same data
 1. Run the command again, choose the same, type threshold;
 2. In the console, you should see exchange rates list with message 'There no changes in exchange rates! No need to send mail'; 
 3. Go to Mailcather. You shouldn't see any email.
 
-## 3. Non-first fetch and changed data
+### 3. Non-first fetch and changed data
 1. Go to the related .json file in `/files` folder and change any buy/sell value
 2. Run the command again, choose the same, type threshold;
 3. In the console, you should see exchange rates list with message 'There are some rates changes: (currencies). The list of changes was sent via email!'; 
