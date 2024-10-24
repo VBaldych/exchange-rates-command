@@ -2,6 +2,7 @@
 
 namespace App\Tests\Unit\Service;
 
+use PHPUnit\Framework\MockObject\MockObject;
 use App\Service\MonobankProvider;
 use App\Service\EmailService;
 use PHPUnit\Framework\TestCase;
@@ -10,14 +11,14 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class MonobankProviderTest extends TestCase
 {
-    private $emailService;
+    private MockObject $emailService;
 
     protected function setUp(): void
     {
         $this->emailService = $this->createMock(EmailService::class);
     }
 
-    public function testFetchRatesFromApi()
+    public function testFetchRatesFromApi(): void
     {
         $inputData = [
             ['currencyCodeA' => '840', 'currencyCodeB' => '980', 'rateBuy' => 41.05, 'rateSell' => 41.5],

@@ -27,15 +27,10 @@ trait FileHandlerTrait
     
     public function isFirstFetch(): bool {
         $filePath = $this->getFilePath();
-
-        if (!file_exists($filePath)) {
-            return true;
-        }
-
-        return false;
+        return !file_exists($filePath);
     }
 
-    public function getFilePath() {
+    public function getFilePath(): string {
         return $this->outputRoot . '/' . $this->bankName . '.json';
     }
 }

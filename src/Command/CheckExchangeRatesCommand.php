@@ -18,7 +18,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 class CheckExchangeRatesCommand extends Command
 {
     public function __construct(
-        private float $thresholdDefault,
+        private readonly float $thresholdDefault,
         private array $bankProviders,
     ) {
         parent::__construct();
@@ -33,7 +33,7 @@ class CheckExchangeRatesCommand extends Command
         // Get list of banks.
         $banks = array_keys($this->bankProviders);
 
-        $io->title(sprintf("Welcome to exchange rate checker!"));
+        $io->title("Welcome to exchange rate checker!");
 
         // Ask a bank.
         $question = new ChoiceQuestion(
@@ -46,7 +46,7 @@ class CheckExchangeRatesCommand extends Command
         // Ask a threshold if it's non-first fetch.
         if (!$this->bankProviders[$bank]->isFirstFetch()) {
             $thresholdQuestion = new Question(
-                sprintf("Please enter the threshold percentage [{$this->thresholdDefault} is default]: "), 
+                sprintf('Please enter the threshold percentage [%s is default]: ', $this->thresholdDefault), 
                 $this->thresholdDefault
             );
             $threshold = $helper->ask($input, $output, $thresholdQuestion);

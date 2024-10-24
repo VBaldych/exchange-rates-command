@@ -8,7 +8,7 @@ interface RatesProviderInterface
 {
     public function processRates(float $threshold, SymfonyStyle $io): void;
     
-    public function connectApi(string $url, array $parameters = null, SymfonyStyle $io): array;
+    public function connectApi(string $url, SymfonyStyle $io, array $parameters = null): array;
 
     public function getApiParams(): array;
 

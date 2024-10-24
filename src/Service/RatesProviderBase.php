@@ -20,7 +20,7 @@ abstract class RatesProviderBase implements RatesProviderInterface
 
     public function processRates(float $threshold, SymfonyStyle $io): void
     {
-        $response = $this->connectApi($this->apiUrl, $this->getApiParams(), $io);
+        $response = $this->connectApi($this->apiUrl, $io, $this->getApiParams());
         $filePath = $this->getFilePath();
         $isFirstFetch = $this->isFirstFetch();
         $newRates = $this->fetchRatesFromApi($response);
@@ -39,7 +39,7 @@ abstract class RatesProviderBase implements RatesProviderInterface
         $this->emailService->sendRatesEmail($payload, $io);
     }
 
-    public function connectApi(string $url, array $parameters = null, SymfonyStyle $io): array {
+    public function connectApi(string $url, SymfonyStyle $io, array $parameters = null): array {
         $response = $this->client->request('GET', $url, $parameters);
 
         if ($response->getStatusCode() !== 200) {
@@ -63,7 +63,7 @@ abstract class RatesProviderBase implements RatesProviderInterface
             // Compare old & new values.
             $rateChanges = $this->checkRateChange($currency, $rate, $oldRates, $threshold);
     
-            if (!empty($rateChanges)) {
+            if ($rateChanges !== []) {
                 $changes[$currency] = $rateChanges;
             }
         }
@@ -102,6 +102,6 @@ abstract class RatesProviderBase implements RatesProviderInterface
     }
     
     private function calculateChange(float $newRate, float $oldRate): float {
-        return $oldRate ? abs(($newRate - $oldRate) / $oldRate * 100) : 0;
+        return $oldRate !== 0.0 ? abs(($newRate - $oldRate) / $oldRate * 100) : 0;
     }
 }

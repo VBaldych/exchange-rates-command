@@ -9,9 +9,9 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 class EmailService
 {
     public function __construct(
-        private MailerInterface $mailer,
-        private string $mailFrom,
-        private string $mailTo
+        private readonly MailerInterface $mailer,
+        private readonly string $mailFrom,
+        private readonly string $mailTo
     ) {}
 
     public function sendRatesEmail(array $payload, SymfonyStyle $io): void {
@@ -22,7 +22,7 @@ class EmailService
             $subject = sprintf("Currency Exchange Rates Changes in %s", $payload['bank']);
             $body .= sprintf("The following currencies have changed above the %s%%:\n", $payload['threshold']);
             $body .= $this->printList($payload['changes']);
-            $body .= sprintf("\n");
+            $body .= "\n";
         }
 
         $body .= "The full exchange rates list:\n";
@@ -37,15 +37,11 @@ class EmailService
         if ($payload['isFirstFetch'] === true) {
             $io->success('Exchange rates received successfully! Email with the rates list is sent!');
             $this->mailer->send($email);
-        }
-        else {
-            if (!empty($payload['changes'])) {
-                $io->success(sprintf('There are some rates changes: %s. The list of changes was sent via email!', implode(', ', array_keys($payload['changes']))));
-                $this->mailer->send($email);
-            }
-            else {
-                $io->success('There no changes in exchange rates! No need to send email');
-            }
+        } elseif (!empty($payload['changes'])) {
+            $io->success(sprintf('There are some rates changes: %s. The list of changes was sent via email!', implode(', ', array_keys($payload['changes']))));
+            $this->mailer->send($email);
+        } else {
+            $io->success('There no changes in exchange rates! No need to send email');
         }
     }
 

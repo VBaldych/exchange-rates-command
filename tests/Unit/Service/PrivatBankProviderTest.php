@@ -2,24 +2,23 @@
 
 namespace App\Tests\Service;
 
+use PHPUnit\Framework\MockObject\MockObject;
 use App\Service\PrivatBankProvider;
-use App\Service\EmailNotificationService;
 use App\Service\EmailService;
 use PHPUnit\Framework\TestCase;
-use Symfony\Component\HttpClient\HttpClient;
 use Symfony\Component\HttpClient\Response\MockResponse;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class PrivatBankProviderTest extends TestCase
 {
-    private $emailService;
+    private MockObject $emailService;
 
     protected function setUp(): void
     {
         $this->emailService = $this->createMock(EmailService::class);
     }
 
-    public function testFetchRatesFromApi()
+    public function testFetchRatesFromApi(): void
     {
         $inputData = [
             'exchangeRate' => [
