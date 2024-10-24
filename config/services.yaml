@@ -22,3 +22,32 @@ services:
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
+
+    App\Service\EmailService:
+        arguments:
+            $mailer: '@mailer'
+            $mailFrom: 'info@exchange-rates.com'
+            $mailTo: 'user@example.com'
+
+    App\Service\PrivatBankProvider:
+        arguments:
+            $client: '@http_client'
+            $outputRoot: '%kernel.project_dir%/files'
+            $bankName: 'PrivatBank'
+            $apiUrl: 'https://api.privatbank.ua/p24api/exchange_rates'
+            $baseCurrency: 'UAH'
+
+    App\Service\MonobankProvider:
+        arguments:
+            $client: '@http_client'
+            $outputRoot: '%kernel.project_dir%/files'
+            $bankName: 'monobank'
+            $apiUrl: 'https://api.monobank.ua/bank/currency'
+            $baseCurrency: 980
+
+    App\Command\CheckExchangeRatesCommand:
+        arguments:
+            $thresholdDefault: 0.5
+            $bankProviders:
+                PrivatBank: '@App\Service\PrivatBankProvider'
+                Monobank: '@App\Service\MonobankProvider'

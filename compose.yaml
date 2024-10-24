@@ -1,0 +1,21 @@
+version: '3'
+
+services:
+  php:
+    container_name: php
+    build:
+      context: .
+    ports:
+      - '9000:9000'
+    volumes:
+      - ./:/var/www/app
+      
+  mailhog:
+    container_name: erc-mailhog
+    image: mailhog/mailhog
+    restart: always
+    logging:
+      driver: "none"
+    ports:
+      - "8025:8025"
+      - "1025:1025"
