@@ -14,7 +14,8 @@ class EmailService
         private readonly string $mailTo
     ) {}
 
-    public function sendRatesEmail(array $payload, SymfonyStyle $io): void {
+    public function sendRatesEmail(array $payload, SymfonyStyle $io): void
+    {
         $subject = sprintf("Exchange Rates in %s", $payload['bank']);
         $body = "";
 
@@ -45,11 +46,13 @@ class EmailService
         }
     }
 
-    public function printRate(string $currency, float $rateBuy, float $rateSell): string {
+    public function printRate(string $currency, float $rateBuy, float $rateSell): string 
+    {
         return sprintf("%s - Buy: %.4f / Sell: %.4f", $currency, $rateBuy, $rateSell);
     }
 
-    public function printList(array $data): string {
+    public function printList(array $data): string
+    {
         $list = [];
     
         foreach ($data as $currency => $rate) {

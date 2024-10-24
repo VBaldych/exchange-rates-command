@@ -16,7 +16,7 @@ abstract class RatesProviderBase implements RatesProviderInterface
         protected string $bankName,
         protected string $apiUrl,
         protected string $baseCurrency
-    ) { }
+    ) {}
 
     public function processRates(float $threshold, SymfonyStyle $io): void
     {
@@ -39,7 +39,8 @@ abstract class RatesProviderBase implements RatesProviderInterface
         $this->emailService->sendRatesEmail($payload, $io);
     }
 
-    public function connectApi(string $url, SymfonyStyle $io, array $parameters = null): array {
+    public function connectApi(string $url, SymfonyStyle $io, array $parameters = null): array
+    {
         $response = $this->client->request('GET', $url, $parameters);
 
         if ($response->getStatusCode() !== 200) {
@@ -49,7 +50,8 @@ abstract class RatesProviderBase implements RatesProviderInterface
         return $response->toArray();
     }
 
-    public function getApiParams(): array {
+    public function getApiParams(): array
+    {
         return [];
     }
 
@@ -101,7 +103,8 @@ abstract class RatesProviderBase implements RatesProviderInterface
         return [];
     }
     
-    private function calculateChange(float $newRate, float $oldRate): float {
+    private function calculateChange(float $newRate, float $oldRate): float
+    {
         return $oldRate !== 0.0 ? abs(($newRate - $oldRate) / $oldRate * 100) : 0;
     }
 }

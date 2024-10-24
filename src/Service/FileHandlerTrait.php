@@ -25,12 +25,14 @@ trait FileHandlerTrait
         $file->fwrite(json_encode($newRates, JSON_PRETTY_PRINT));
     }
     
-    public function isFirstFetch(): bool {
+    public function isFirstFetch(): bool
+    {
         $filePath = $this->getFilePath();
         return !file_exists($filePath);
     }
 
-    public function getFilePath(): string {
+    public function getFilePath(): string
+    {
         return $this->outputRoot . '/' . $this->bankName . '.json';
     }
 }

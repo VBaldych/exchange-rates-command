@@ -4,7 +4,8 @@ namespace App\Service;
 
 final class PrivatBankProvider extends RatesProviderBase
 {
-    public function getApiParams(): array {
+    public function getApiParams(): array
+    {
         return [
             'query' => [
                 'date' => date('d.m.Y'),
@@ -12,7 +13,8 @@ final class PrivatBankProvider extends RatesProviderBase
         ];
     }
     
-    public function fetchRatesFromApi(array $raw): array {
+    public function fetchRatesFromApi(array $raw): array
+    {
         $formattedRates = [];
 
         if (empty($raw['exchangeRate'])) {
