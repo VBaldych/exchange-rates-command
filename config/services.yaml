@@ -4,6 +4,7 @@
 # Put parameters here that don't need to change on each machine where the app is deployed
 # https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
 parameters:
+    $outputRoot: '%kernel.project_dir%/files'
 
 services:
     # default configuration for services in *this* file
@@ -25,22 +26,17 @@ services:
 
     App\Service\EmailService:
         arguments:
-            $mailer: '@mailer'
             $mailFrom: 'info@exchange-rates.com'
             $mailTo: 'user@example.com'
 
     App\Service\PrivatBankProvider:
         arguments:
-            $client: '@http_client'
-            $outputRoot: '%kernel.project_dir%/files'
             $bankName: 'PrivatBank'
             $apiUrl: 'https://api.privatbank.ua/p24api/exchange_rates'
             $baseCurrency: 'UAH'
 
     App\Service\MonobankProvider:
         arguments:
-            $client: '@http_client'
-            $outputRoot: '%kernel.project_dir%/files'
             $bankName: 'monobank'
             $apiUrl: 'https://api.monobank.ua/bank/currency'
             $baseCurrency: 980
