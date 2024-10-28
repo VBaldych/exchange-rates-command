@@ -8,21 +8,18 @@ final class MonobankProvider extends RatesProviderBase
     {
         $formattedRates = [];
 
-        if (isset($raw['errCode']) && $raw['errCode'] === 'TMR') {
-            throw new \RuntimeException(sprintf("%s API Error: too many requests", $this->bankName));
-        }
-
-        foreach ($raw as $rate) {
-            // Search only by one base currency.
-            // Searchable currency shouldn't be as base currency.
-            if ($rate['currencyCodeB'] == $this->baseCurrency && $rate['currencyCodeA'] != $this->baseCurrency) {
-                $formattedRates[$rate['currencyCodeA']] = [
-                    'buy' => $rate['rateBuy'] ?? $rate['rateCross'],
-                    'sell' => $rate['rateSell'] ?? $rate['rateCross'],
-                ];
+        if (!empty($raw)) {
+            foreach ($raw as $rate) {
+                // Search only by one base currency.
+                // Searchable currency shouldn't be as base currency.
+                if ($rate['currencyCodeB'] == $this->baseCurrency && $rate['currencyCodeA'] != $this->baseCurrency) {
+                    $formattedRates[$rate['currencyCodeA']] = [
+                        'buy' => $rate['rateBuy'] ?? $rate['rateCross'],
+                        'sell' => $rate['rateSell'] ?? $rate['rateCross'],
+                    ];
+                }
             }
         }
-
 
         return $formattedRates;
     }

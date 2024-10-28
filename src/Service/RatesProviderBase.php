@@ -42,9 +42,10 @@ abstract class RatesProviderBase implements RatesProviderInterface
     public function connectApi(string $url, SymfonyStyle $io, array $parameters = null): array
     {
         $response = $this->client->request('GET', $url, $parameters);
+        $statusCode = $response->getStatusCode();
 
-        if ($response->getStatusCode() !== 200) {
-            throw new \RuntimeException(sprintf("Error accessing %s API", $this->bankName));
+        if ($statusCode !== 200) {
+            throw new \RuntimeException(sprintf("Error accessing %s API, status code - %s", $this->bankName, $statusCode));
         }
 
         return $response->toArray();
