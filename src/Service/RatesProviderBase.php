@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Service;
 
 use Symfony\Component\Console\Style\SymfonyStyle;
@@ -42,9 +44,10 @@ abstract class RatesProviderBase implements RatesProviderInterface
     public function connectApi(string $url, SymfonyStyle $io, array $parameters = null): array
     {
         $response = $this->client->request('GET', $url, $parameters);
+        $statusCode = $response->getStatusCode();
 
-        if ($response->getStatusCode() !== 200) {
-            throw new \RuntimeException(sprintf("Error accessing %s API", $this->bankName));
+        if ($statusCode !== 200) {
+            throw new \RuntimeException(sprintf("Error accessing %s API, status code - %s", $this->bankName, $statusCode));
         }
 
         return $response->toArray();
@@ -60,8 +63,8 @@ abstract class RatesProviderBase implements RatesProviderInterface
         $changes = [];
     
         foreach ($newRates as $currency => $rate) {
-            // Print rate inconsole
-            $this->printRateToConsole($currency, $rate['buy'], $rate['sell'], $io);
+            // Print rate in console
+            $io->writeln($this->emailService->printRate($currency, $rate['buy'], $rate['sell']));
             // Compare old & new values.
             $rateChanges = $this->checkRateChange($currency, $rate, $oldRates, $threshold);
     
@@ -73,12 +76,7 @@ abstract class RatesProviderBase implements RatesProviderInterface
         return $changes;
     }
     
-    private function printRateToConsole(string $currency, float $buy, float $sell, SymfonyStyle $io): void
-    {
-        $io->writeln($this->emailService->printRate($currency, $buy, $sell));
-    }
-    
-    private function checkRateChange(string $currency, array $newRate, array $oldRates, float $threshold): array
+    private function checkRateChange(string|int $currency, array $newRate, array $oldRates, float $threshold): array
     {
         if (!isset($oldRates[$currency])) {
             return [];

@@ -1,13 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Command;
 
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Question\ChoiceQuestion;
-use Symfony\Component\Console\Question\Question;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 #[AsCommand(
@@ -24,40 +25,38 @@ class CheckExchangeRatesCommand extends Command
         parent::__construct();
     }
 
+    protected function configure(): void
+    {
+        $this
+            ->addArgument('bank', InputArgument::REQUIRED, 'Choose a bank')
+            ->addArgument('threshold', InputArgument::REQUIRED, 'Input threshold percentage')
+        ;
+    }    
+
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
-        $helper = $this->getHelper('question');
-        $threshold = 0;
 
         // Get list of banks.
         $banks = array_keys($this->bankProviders);
+        // Bank from user input.
+        $bank = $input->getArgument('bank');
+        // Threshold from user input.
+        $threshold = (float) $input->getArgument('threshold');
+
+        if (!in_array($bank, $banks)) {
+            $io->error(sprintf("%s not found in the system. Registered banks - %s", $bank, implode(", ", $banks)));
+    
+            return Command::FAILURE;
+        }
+
+        if (!is_numeric($threshold) || $threshold <= 0) {
+            $io->error('Threshold value should be numeric and > 0!');
+
+            return Command::FAILURE;
+        }
 
         $io->title("Welcome to exchange rate checker!");
-
-        // Ask a bank.
-        $question = new ChoiceQuestion(
-            sprintf("Please select a bank to check exchange rates [%s is default]: ", $banks[0]),
-            $banks,
-            0
-        );
-        $bank = $helper->ask($input, $output, $question);
-
-        // Ask a threshold if it's non-first fetch.
-        if (!$this->bankProviders[$bank]->isFirstFetch()) {
-            $thresholdQuestion = new Question(
-                sprintf('Please enter the threshold percentage [%s is default]: ', $this->thresholdDefault), 
-                $this->thresholdDefault
-            );
-            $threshold = $helper->ask($input, $output, $thresholdQuestion);
-    
-            // Check threshold value.
-            if (!is_numeric($threshold) || $threshold <= 0) {
-                $io->error('Threshold value should be numeric and > 0!');
-    
-                return Command::FAILURE;
-            }
-        }
 
         // Get the rates.
         $io->title(sprintf('Fetching rates from %s', $bank));
