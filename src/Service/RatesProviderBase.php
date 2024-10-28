@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Service;
 
 use Symfony\Component\Console\Style\SymfonyStyle;
@@ -61,8 +63,8 @@ abstract class RatesProviderBase implements RatesProviderInterface
         $changes = [];
     
         foreach ($newRates as $currency => $rate) {
-            // Print rate inconsole
-            $this->printRateToConsole($currency, $rate['buy'], $rate['sell'], $io);
+            // Print rate in console
+            $io->writeln($this->emailService->printRate($currency, $rate['buy'], $rate['sell']));
             // Compare old & new values.
             $rateChanges = $this->checkRateChange($currency, $rate, $oldRates, $threshold);
     
@@ -74,12 +76,7 @@ abstract class RatesProviderBase implements RatesProviderInterface
         return $changes;
     }
     
-    private function printRateToConsole(string $currency, float $buy, float $sell, SymfonyStyle $io): void
-    {
-        $io->writeln($this->emailService->printRate($currency, $buy, $sell));
-    }
-    
-    private function checkRateChange(string $currency, array $newRate, array $oldRates, float $threshold): array
+    private function checkRateChange(string|int $currency, array $newRate, array $oldRates, float $threshold): array
     {
         if (!isset($oldRates[$currency])) {
             return [];

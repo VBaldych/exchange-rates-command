@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Service;
 
 use Symfony\Component\Mailer\MailerInterface;
@@ -46,7 +48,7 @@ class EmailService
         }
     }
 
-    public function printRate(string $currency, float $rateBuy, float $rateSell): string 
+    public function printRate(string|int $currency, float $rateBuy, float $rateSell): string 
     {
         return sprintf("%s - Buy: %.4f / Sell: %.4f", $currency, $rateBuy, $rateSell);
     }

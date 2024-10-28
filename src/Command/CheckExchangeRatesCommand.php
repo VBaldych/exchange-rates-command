@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Command;
 
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -40,7 +42,7 @@ class CheckExchangeRatesCommand extends Command
         // Bank from user input.
         $bank = $input->getArgument('bank');
         // Threshold from user input.
-        $threshold = $input->getArgument('threshold');
+        $threshold = (float) $input->getArgument('threshold');
 
         if (!in_array($bank, $banks)) {
             $io->error(sprintf("%s not found in the system. Registered banks - %s", $bank, implode(", ", $banks)));
