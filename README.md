@@ -74,7 +74,7 @@ php bin/phpunit
 4. Go to Mailcather. You should see email with changed rates + actual list with all rates.
 
 ## Code analyzing
-- For analyzing code with Rector use command
+For analyzing code with Rector use command
 ```bash
 vendor/bin/rector process --dry-run
 ```
